@@ -15,6 +15,7 @@ securemailscope/
     └── index.html
 ```
 
+requirements.txt
 ```text
 Flask==3.0.2
 scapy==2.5.5
