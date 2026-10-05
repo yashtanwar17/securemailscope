@@ -1,0 +1,6 @@
+Flask==3.0.2
+scapy==2.6.1
+cryptography==42.0.5
+google-generativeai==0.8.3
+requests==2.31.0
+reportlab==4.1.0
