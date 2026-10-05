@@ -1,5 +1,6 @@
 # securemailscope
 
+AI-Assisted Cryptographic Security Posture Assessment for Secure Email Communications (SIH26159 - NTRO).
 
 Project File Structure
 ```text
