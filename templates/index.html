@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureMailScope | AI-Assisted Cryptographic Security Posture Assessment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#0b0f19',
+                        cardbg: '#111827',
+                        bordercol: '#1f2937'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-darkbg text-slate-100 min-h-screen font-sans selection:bg-cyan-500 selection:text-black">
+    <!-- Header -->
+    <header class="border-b border-bordercol bg-cardbg/50 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-cyan-500/10 border border-cyan-500/30 p-2.5 rounded-xl text-cyan-400">
+                    <i class="fa-solid fa-shield-halved text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight text-white">SecureMailScope</h1>
+                    <p class="text-xs text-slate-400">AI-Assisted Cryptographic Security Posture Assessment | NTRO SIH26159</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-2 h-2 mr-1.5 rounded-full bg-emerald-400 animate-pulse"></span> System Online
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Upload Section -->
+        <div class="bg-cardbg border border-bordercol rounded-2xl p-8 mb-8 shadow-xl">
+            <div class="max-w-2xl mx-auto text-center">
+                <h2 class="text-xl font-semibold text-white mb-2">Upload Enterprise Network Traffic</h2>
+                <p class="text-sm text-slate-400 mb-6">Upload packet capture (PCAP) files containing SMTP, IMAP, or POP3 sessions for passive cryptographic forensics.</p>
+                
+                <form id="uploadForm" class="space-y-4">
+                    <div class="border-2 border-dashed border-bordercol hover:border-cyan-500/50 rounded-xl p-8 transition cursor-pointer bg-slate-900/50 relative" id="dropZone">
+                        <input type="file" id="pcapFile" name="pcap_file" accept=".pcap,.pcapng" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
+                        <div class="flex flex-col items-center pointer-events-none">
+                            <i class="fa-solid fa-cloud-arrow-up text-3xl text-cyan-400 mb-3"></i>
+                            <p class="text-sm font-medium text-slate-200" id="fileNameDisplay">Drag & drop your PCAP file here, or <span class="text-cyan-400 underline">browse</span></p>
+                            <p class="text-xs text-slate-500 mt-1">Supports standard .pcap and .pcapng network traces</p>
+                        </div>
+                    </div>
+                    <button type="submit" id="submitBtn" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>Run Cryptographic Assessment</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="hidden text-center py-16">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-cyan-500 border-t-transparent mb-4"></div>
+            <h3 class="text-lg font-medium text-white">Performing Deep Packet & Cryptographic Analysis...</h3>
+            <p class="text-sm text-slate-400 mt-1">Reconstructing TCP streams, validating X.509 chains, and querying Gemini AI risk models.</p>
+        </div>
+
+        <!-- Results Dashboard (Hidden Initially) -->
+        <div id="resultsDashboard" class="hidden space-y-8">
+            <!-- Top Metric Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-cardbg border border-bordercol rounded-2xl p-6">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Security Posture Score</p>
+                    <div class="flex items-baseline space-x-2">
+                        <span id="scoreVal" class="text-4xl font-black text-rose-400">--</span>
+                        <span class="text-slate-500 text-sm">/ 100</span>
+                    </div>
+                    <div class="mt-3">
+                        <span id="classificationBadge" class="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-rose-500/10 text-rose-400 border border-rose-500/20">--</span>
+                    </div>
+                </div>
+
+                <div class="bg-cardbg border border-bordercol rounded-2xl p-6 md:col-span-2 flex flex-col justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">AI Threat & Anomaly Overview</p>
+                        <p id="anomalyText" class="text-sm text-slate-300 leading-relaxed"></p>
+                    </div>
+                    <div class="flex items-center space-x-3 mt-4 pt-4 border-t border-bordercol">
+                        <span class="text-xs font-medium text-slate-400">Export Reports:</span>
+                        <a href="/export/json" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-medium rounded-lg text-cyan-400 border border-bordercol transition"><i class="fa-solid fa-code mr-1.5"></i> JSON</a>
+                        <a href="/export/html" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-medium rounded-lg text-cyan-400 border border-bordercol transition"><i class="fa-solid fa-file-code mr-1.5"></i> HTML Report</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Recommendations & Findings -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- AI Recommendations -->
+                <div class="bg-cardbg border border-bordercol rounded-2xl p-6">
+                    <h3 class="text-base font-semibold text-white mb-4 flex items-center">
+                        <i class="fa-solid fa-brain text-cyan-400 mr-2"></i> AI-Prioritized Remediation
+                    </h3>
+                    <ul id="recommendationsList" class="space-y-3">
+                        <!-- Populated dynamically -->
+                    </ul>
+                </div>
+
+                <!-- Cryptographic Vulnerabilities -->
+                <div class="bg-cardbg border border-bordercol rounded-2xl p-6">
+                    <h3 class="text-base font-semibold text-white mb-4 flex items-center">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-400 mr-2"></i> Cryptographic Vulnerabilities
+                    </h3>
+                    <div id="findingsContainer" class="space-y-3 max-h-64 overflow-y-auto pr-2">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certificate Audit Table -->
+            <div class="bg-cardbg border border-bordercol rounded-2xl p-6">
+                <h3 class="text-base font-semibold text-white mb-4 flex items-center">
+                    <i class="fa-solid fa-certificate text-emerald-400 mr-2"></i> X.509 Certificate Chain Validation
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-slate-900/50 text-xs uppercase text-slate-400 border-b border-bordercol">
+                            <tr>
+                                <th class="py-3 px-4">Subject</th>
+                                <th class="py-3 px-4">Issuer</th>
+                                <th class="py-3 px-4">Key / Signature</th>
+                                <th class="py-3 px-4">Validity</th>
+                                <th class="py-3 px-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="certTableBody" class="divide-y divide-bordercol">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const fileInput = document.getElementById('pcapFile');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const uploadForm = document.getElementById('uploadForm');
+        const loadingState = document.getElementById('loadingState');
+        const resultsDashboard = document.getElementById('resultsDashboard');
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                fileNameDisplay.innerHTML = `<span class="text-cyan-400 font-medium">${e.target.files[0].name}</span> selected`;
+            }
+        });
+
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(uploadForm);
+            
+            loadingState.classList.remove('hidden');
+            resultsDashboard.classList.add('hidden');
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    populateDashboard(data);
+                    loadingState.classList.add('hidden');
+                    resultsDashboard.classList.remove('hidden');
+                } else {
+                    alert('Error: ' + (data.error || 'Analysis failed'));
+                    loadingState.classList.add('hidden');
+                }
+            } catch (err) {
+                alert('Network or server error occurred.');
+                loadingState.classList.add('hidden');
+            }
+        });
+
+        function populateDashboard(data) {
+            document.getElementById('scoreVal').innerText = data.posture_score;
+            document.getElementById('classificationBadge').innerText = data.classification;
+            document.getElementById('anomalyText').innerText = data.ai_analysis.anomaly_detection;
+
+            // Recommendations
+            const recList = document.getElementById('recommendationsList');
+            recList.innerHTML = '';
+            data.ai_analysis.prioritized_recommendations.forEach((rec, idx) => {
+                recList.innerHTML += `
+                    <li class="flex items-start space-x-3 text-sm text-slate-300 bg-slate-900/40 p-3 rounded-xl border border-bordercol">
+                        <span class="bg-cyan-500/10 text-cyan-400 font-bold px-2 py-0.5 rounded text-xs">${idx+1}</span>
+                        <span>${rec}</span>
+                    </li>
+                `;
+            });
+
+            // Findings
+            const findingsContainer = document.getElementById('findingsContainer');
+            findingsContainer.innerHTML = '';
+            const findings = data.crypto_findings.crypto_findings || [];
+            if (findings.length === 0) {
+                findingsContainer.innerHTML = `<p class="text-sm text-slate-500 italic">No critical cryptographic weaknesses detected.</p>`;
+            } else {
+                findings.forEach(f => {
+                    const badgeColor = f.severity === 'CRITICAL' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+                    findingsContainer.innerHTML += `
+                        <div class="p-3 bg-slate-900/40 rounded-xl border border-bordercol">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-medium text-xs text-white">${f.category}</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${badgeColor}">${f.severity}</span>
+                            </div>
+                            <p class="text-xs text-slate-400">${f.description}</p>
+                        </div>
+                    `;
+                });
+            }
+
+            // Cert Table
+            const certTableBody = document.getElementById('certTableBody');
+            certTableBody.innerHTML = '';
+            const certs = data.certificate_audit.certificate_details || [];
+            certs.forEach(c => {
+                const statusColor = c.status === 'COMPLIANT' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-rose-400 bg-rose-500/10 border-rose-500/20';
+                certTableBody.innerHTML += `
+                    <tr class="hover:bg-slate-900/30">
+                        <td class="py-3 px-4 font-medium text-white">${c.subject}</td>
+                        <td class="py-3 px-4 text-slate-400">${c.issuer}</td>
+                        <td class="py-3 px-4 text-slate-400">${c.key_algorithm}<br><span class="text-xs text-slate-500">${c.signature_algorithm}</span></td>
+                        <td class="py-3 px-4 text-slate-400">${c.valid_to}</td>
+                        <td class="py-3 px-4"><span class="px-2.5 py-1 rounded-full text-xs font-semibold border ${statusColor}">${c.status}</span></td>
+                    </tr>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
