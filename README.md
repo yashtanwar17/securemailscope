@@ -1,5 +1,7 @@
 # securemailscope
 
+
+Project File Structure
 ```text
 securemailscope/
 ├── app.py
